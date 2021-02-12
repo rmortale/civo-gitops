@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podtato-head-hello-server
+  labels:
+    helm.sh/chart: hello-server-0.1.0
+    app.kubernetes.io/name: hello-server
+    app.kubernetes.io/instance: podtato-head
+    app.kubernetes.io/version: "v0.1.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-server
+      app.kubernetes.io/instance: podtato-head
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-server
+        app.kubernetes.io/instance: podtato-head
+    spec:
+      serviceAccountName: podtato-head-hello-server
+      securityContext:
+        {}
+      containers:
+        - name: hello-server
+          securityContext:
+            {}
+          image: "ghcr.io/podtato-head/hello-server:v0.1.0"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
